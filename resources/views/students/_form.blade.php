@@ -1,7 +1,3 @@
-{{--
-    Shared form partial — used by both create.blade.php and edit.blade.php.
-    Expects $student to be defined (new Student() for create, existing for edit).
---}}
 <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
 
     {{-- Name --}}
