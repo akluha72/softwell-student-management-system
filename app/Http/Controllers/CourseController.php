@@ -12,10 +12,24 @@ class CourseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $courses = Course::withCount('students')->withCount('examMarks')->latest()->paginate(10);
-        return view('courses.index', compact('courses'));
+        $search = $request->input('search');
+
+        $courses = Course::withCount('students')
+            ->withCount('examMarks')
+            ->withAvg('examMarks', 'mark')
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('code', 'like', "%{$search}%");
+                });
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('courses.index', compact('courses', 'search'));
     }
 
     /**

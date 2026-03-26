@@ -70,4 +70,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('students/{student}/report-card', [StudentController::class, 'reportCard'])
+    ->name('students.report-card');
+
 require __DIR__ . '/auth.php';

@@ -6,16 +6,31 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
 use App\Models\Student;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class StudentController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $students = Student::withCount('examMarks')->withAvg('examMarks', 'mark')->latest()->paginate(10);
-        return view('students.index', compact('students'));
+        $search = $request->input('search');
+
+        $students = Student::withCount('examMarks')
+            ->withAvg('examMarks', 'mark')
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('student_id', 'like', "%{$search}%");
+                });
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString(); // keeps ?search= in pagination links
+
+        return view('students.index', compact('students', 'search'));
     }
 
     /**
@@ -37,7 +52,7 @@ class StudentController extends Controller
             ...$request->validated(),
             'student_id' => $studentId,
         ]);
-  
+
         return redirect()->route('students.index')
             ->with('success', 'Student created successfully.');
     }
@@ -81,5 +96,17 @@ class StudentController extends Controller
 
         return redirect()->route('students.index')
             ->with('success', 'Student deleted successfully.');
+    }
+
+    public function reportCard(Student $student)
+    {
+        $student->load(['examMarks.course', 'courses']);
+
+        $pdf = Pdf::loadView('students.report-card', compact('student'))
+            ->setPaper('a4', 'portrait');
+
+        $filename = 'report-card-' . str_replace(' ', '-', strtolower($student->name)) . '.pdf';
+
+        return $pdf->download($filename);
     }
 }

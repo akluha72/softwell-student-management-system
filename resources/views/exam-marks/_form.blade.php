@@ -1,21 +1,16 @@
-{{--
-    Shared form partial for exam marks.
-    Expects: $students, $courses, $examMark
-    Optional: $selectedStudentId, $selectedCourseId (for pre-selection)
---}}
 <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-
     {{-- Student --}}
     <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Student <span class="text-red-500">*</span></label>
-        <select name="student_id"
-            class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500
-                       {{ $errors->has('student_id') ? 'border-red-400 bg-red-50' : 'border-gray-300' }}">
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+            Student <span class="text-red-500">*</span>
+        </label>
+        <select name="student_id" id="select-student"
+            class="w-full {{ $errors->has('student_id') ? 'border-red-400' : '' }}">
             <option value="">— Select Student —</option>
             @foreach ($students as $student)
                 <option value="{{ $student->id }}"
                     {{ (int) old('student_id', $examMark->student_id ?? ($selectedStudentId ?? '')) === $student->id ? 'selected' : '' }}>
-                    {{ $student->name }} ({{ $student->student_id }})
+                    {{ $student->name }} — {{ $student->student_id }}
                 </option>
             @endforeach
         </select>
@@ -25,23 +20,24 @@
     </div>
 
     {{-- Course --}}
-    <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Course <span class="text-red-500">*</span></label>
-        <select name="course_id"
-            class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500
-                       {{ $errors->has('course_id') ? 'border-red-400 bg-red-50' : 'border-gray-300' }}">
-            <option value="">— Select Course —</option>
-            @foreach ($courses as $course)
-                <option value="{{ $course->id }}"
-                    {{ (int) old('course_id', $examMark->course_id ?? ($selectedCourseId ?? '')) === $course->id ? 'selected' : '' }}>
-                    {{ $course->name }} ({{ $course->code }})
-                </option>
-            @endforeach
-        </select>
-        @error('course_id')
-            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-        @enderror
-    </div>
+<div>
+    <label class="block text-sm font-medium text-gray-700 mb-1">
+        Course <span class="text-red-500">*</span>
+    </label>
+    <select name="course_id" id="select-course"
+            class="w-full {{ $errors->has('course_id') ? 'border-red-400' : '' }}">
+        <option value="">— Select Course —</option>
+        @foreach ($courses as $course)
+            <option value="{{ $course->id }}"
+                {{ (int) old('course_id', $examMark->course_id ?? $selectedCourseId ?? '') === $course->id ? 'selected' : '' }}>
+                {{ $course->name }} ({{ $course->code }})
+            </option>
+        @endforeach
+    </select>
+    @error('course_id')
+        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+    @enderror
+</div>
 
     {{-- Mark --}}
     <div>
@@ -91,7 +87,6 @@
 
 </div>
 
-{{-- Live grade preview script --}}
 <script>
     const markInput = document.getElementById('mark-input');
     const gradePreview = document.getElementById('grade-preview');
@@ -120,5 +115,17 @@
     }
 
     markInput.addEventListener('input', updateGradePreview);
-    updateGradePreview(); // run on page load for edit form
+    updateGradePreview();
+</script>
+
+
+<script>
+    new TomSelect('#select-student', {
+        placeholder: 'Search student by name or ID...',
+        maxOptions: 50,
+    });
+    new TomSelect('#select-course', {
+        placeholder: 'Search course by name or code...',
+        maxOptions: 50,
+    });
 </script>
