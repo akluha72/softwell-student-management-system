@@ -28,7 +28,7 @@ class StudentController extends Controller
             })
             ->latest()
             ->paginate(10)
-            ->withQueryString(); // keeps ?search= in pagination links
+            ->withQueryString();
 
         return view('students.index', compact('students', 'search'));
     }

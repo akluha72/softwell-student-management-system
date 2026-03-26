@@ -14,10 +14,25 @@ class ExamMarkController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $examMarks = ExamMark::with(['student', 'course'])->latest()->paginate(15);
-        return view('exam-marks.index', compact('examMarks'));
+        $search = $request->input('search');
+
+        $examMarks = ExamMark::with(['student', 'course'])
+            ->when($search, function ($query, $search) {
+                $query->whereHas('student', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('student_id', 'like', "%{$search}%");
+                })->orWhereHas('course', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('code', 'like', "%{$search}%");
+                });
+            })
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+            
+        return view('exam-marks.index', compact('examMarks', 'search'));
     }
 
     /**

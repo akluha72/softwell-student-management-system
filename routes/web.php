@@ -6,49 +6,13 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ExamMarkController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
 });
 
-Route::get('/dashboard', function () {
-
-    $totalStudents = \App\Models\Student::count();
-    $totalCourses  = \App\Models\Course::count();
-    $totalMarks    = \App\Models\ExamMark::count();
-    $overallAvg    = round(\App\Models\ExamMark::avg('mark') ?? 0, 1);
-
-    // Grade distribution
-    $gradeDistribution = collect(['A+','A','B+','B','C+','C','D','F'])
-        ->mapWithKeys(fn ($grade) => [
-            $grade => \App\Models\ExamMark::where('grade', $grade)->count()
-        ]);
-
-    // Top 5 students by average mark
-    $topStudents = \App\Models\Student::withAvg('examMarks', 'mark')
-        ->withCount('examMarks')
-        ->having('exam_marks_count', '>', 0)
-        ->orderByDesc('exam_marks_avg_mark')
-        ->limit(5)
-        ->get();
-
-    // Recent 8 exam marks
-    $recentMarks = \App\Models\ExamMark::with(['student', 'course'])
-        ->latest()
-        ->limit(8)
-        ->get();
-
-    return view('dashboard', compact(
-        'totalStudents',
-        'totalCourses',
-        'totalMarks',
-        'overallAvg',
-        'gradeDistribution',
-        'topStudents',
-        'recentMarks'
-    ));
-
-})->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 // Resource routes
 Route::resource('students', StudentController::class);
