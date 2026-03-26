@@ -1,59 +1,244 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Student Management System (SMS)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A web-based student management system built with Laravel 11. Manage students, courses, and exam marks — with reports and CSV export.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Students** — full CRUD with soft deletes, auto-generated student IDs
+- **Courses** — full CRUD with credit hours and descriptions
+- **Exam Marks** — record marks with auto-calculated grade letters (A+ to F)
+- **Course Enrollment** — students are auto-enrolled when a mark is recorded
+- **Reports** — average mark per student and per course, with grade distribution
+- **CSV Export** — export both reports with UTF-8 BOM for Excel compatibility
+- **Dashboard** — summary stats, top students leaderboard, grade distribution chart, recent activity
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Tech Stack
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- **Framework** — Laravel 11
+- **Frontend** — Blade + Tailwind CSS + Vite
+- **Database** — SQLite (zero config for local dev)
+- **Auth** — Laravel Breeze
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## Requirements
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- PHP 8.2+
+- Composer
+- Node.js 18+ and npm
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Local Setup
 
-## Contributing
+### 1. Clone the repository
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+git clone https://github.com/your-username/student-management-system.git
+cd student-management-system
+```
 
-## Code of Conduct
+### 2. Install dependencies
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+composer install
+npm install
+```
 
-## Security Vulnerabilities
+### 3. Environment setup
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+### 4. Configure the database
+
+This project uses SQLite by default — no database server needed.
+
+Open `.env` and make sure these lines are set:
+
+```env
+DB_CONNECTION=sqlite
+```
+
+Then create the SQLite file:
+
+```bash
+touch database/database.sqlite
+```
+
+### 5. Run migrations and seed
+
+```bash
+php artisan migrate --seed
+```
+
+This creates all tables and seeds:
+- 12 Malaysian students (Malay, Chinese, and Indian names)
+- 7 courses across Computer Science, Mathematics, and English
+- Realistic exam marks with a bell-curve grade distribution
+
+### 6. Build frontend assets
+
+```bash
+npm run dev
+```
+
+### 7. Start the server
+
+```bash
+php artisan serve
+```
+
+Visit [http://localhost:8000](http://localhost:8000)
+
+---
+
+## Login Credentials
+
+After seeding, log in with the default Breeze account:
+
+```
+Email:    test@example.com
+Password: password
+```
+
+> To change these, update `database/seeders/DatabaseSeeder.php` before running migrations.
+
+---
+
+## Project Structure
+
+```
+app/
+├── Http/
+│   ├── Controllers/
+│   │   ├── StudentController.php
+│   │   ├── CourseController.php
+│   │   ├── ExamMarkController.php
+│   │   └── ReportController.php
+│   └── Requests/
+│       ├── StoreStudentRequest.php
+│       ├── UpdateStudentRequest.php
+│       ├── StoreCourseRequest.php
+│       ├── UpdateCourseRequest.php
+│       ├── StoreExamMarkRequest.php
+│       └── UpdateExamMarkRequest.php
+├── Models/
+│   ├── Student.php
+│   ├── Course.php
+│   └── ExamMark.php
+└── Services/
+    └── ReportService.php
+
+database/
+├── migrations/
+└── seeders/
+    ├── DatabaseSeeder.php
+    ├── StudentSeeder.php
+    ├── CourseSeeder.php
+    └── ExamMarkSeeder.php
+
+resources/views/
+├── layouts/
+│   └── app.blade.php
+├── students/
+├── courses/
+├── exam-marks/
+├── reports/
+└── dashboard.blade.php
+```
+
+---
+
+## Grade Scale
+
+| Mark | Grade |
+|------|-------|
+| 90 – 100 | A+ |
+| 80 – 89  | A  |
+| 75 – 79  | B+ |
+| 70 – 74  | B  |
+| 65 – 69  | C+ |
+| 60 – 64  | C  |
+| 55 – 59  | D  |
+| 0 – 54   | F  |
+
+---
+
+## Key Design Decisions
+
+**Soft Deletes** — Students and courses use `SoftDeletes`. Deleted records are hidden from the UI but retained in the database. To restore a record via Tinker:
+
+```bash
+php artisan tinker
+>>> App\Models\Student::withTrashed()->find(1)->restore();
+```
+
+**Auto Enrollment** — When an exam mark is recorded for a student, they are automatically enrolled in that course via the `course_student` pivot table (`syncWithoutDetaching`). No separate enrollment step is required.
+
+**Grade Auto-Calculation** — The `ExamMark` model uses a `saving` hook to automatically calculate and store the grade letter whenever a mark is created or updated. The `gradeFromMark()` method is a static helper used across the entire application as a single source of truth.
+
+**CSV UTF-8 BOM** — Both CSV exports include a UTF-8 BOM header so that special characters in Malaysian names render correctly when opened in Microsoft Excel on Windows.
+
+**ReportService** — All report query logic is isolated in `app/Services/ReportService.php` and injected into `ReportController` via the constructor. This keeps the controller thin and the business logic independently testable.
+
+---
+
+## Available Routes
+
+```
+GET    /dashboard
+
+GET    /students
+GET    /students/create
+POST   /students
+GET    /students/{student}
+GET    /students/{student}/edit
+PUT    /students/{student}
+DELETE /students/{student}
+POST   /students/{student}/enroll
+DELETE /students/{student}/unenroll/{course}
+
+GET    /courses
+GET    /courses/create
+POST   /courses
+GET    /courses/{course}
+GET    /courses/{course}/edit
+PUT    /courses/{course}
+DELETE /courses/{course}
+
+GET    /exam-marks
+GET    /exam-marks/create
+POST   /exam-marks
+GET    /exam-marks/{examMark}
+GET    /exam-marks/{examMark}/edit
+PUT    /exam-marks/{examMark}
+DELETE /exam-marks/{examMark}
+
+GET    /reports/students
+GET    /reports/courses
+GET    /reports/students/export
+GET    /reports/courses/export
+```
+
+---
+
+## Possible Extensions
+
+- Restore soft-deleted records via a Trash UI
+- Multiple exam types per course (midterm, final, quiz)
+- Student login portal to view own results
+- Email notifications when marks are recorded
+- PDF export for individual student report cards
+
+---
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+MIT

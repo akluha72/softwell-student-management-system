@@ -13,6 +13,10 @@
         </div>
 
         <div class="bg-white rounded-xl border border-gray-200 p-6">
+            <div class="bg-gray-50 rounded-lg px-4 py-3 mb-5 flex items-center justify-between">
+                <span class="text-sm text-gray-500">Student ID</span>
+                <span class="font-mono text-sm font-medium text-gray-700">{{ $student->student_id }}</span>
+            </div>
             <form action="{{ route('students.update', $student) }}" method="POST">
                 @csrf
                 @method('PUT')

@@ -31,8 +31,13 @@ class StudentController extends Controller
      */
     public function store(StoreStudentRequest $request)
     {
-        Student::create($request->validated());
-
+        $nextNumber = Student::withTrashed()->count() + 1;
+        $studentId = 'STU-' . date('Y') . '-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+        Student::create([
+            ...$request->validated(),
+            'student_id' => $studentId,
+        ]);
+  
         return redirect()->route('students.index')
             ->with('success', 'Student created successfully.');
     }
