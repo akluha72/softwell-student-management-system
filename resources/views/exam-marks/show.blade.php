@@ -34,7 +34,7 @@
                 <p class="text-4xl font-semibold text-gray-900">{{ number_format($examMark->mark, 1) }}</p>
             </div>
             <div class="text-right">
-                <p class="text-xs text-gray-500 mb-1">Grade</p>
+                <p class="text-xs text-start text-gray-500 mb-3">Grade</p>
                 <span
                     class="text-3xl font-semibold px-4 py-1.5 rounded-lg
                 {{ $examMark->mark >= 80

@@ -10,7 +10,6 @@
         <p class="text-sm text-gray-500 mt-0.5">{{ now()->format('l, d F Y') }}</p>
     </div>
 
-    {{-- ── Stat cards ─────────────────────────────────────────── --}}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
 
         <a href="{{ route('students.index') }}"
@@ -84,10 +83,8 @@
                 @endif
             </p>
         </a>
-
     </div>
 
-    {{-- ── Main grid ───────────────────────────────────────────── --}}
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {{-- Grade distribution --}}
@@ -117,7 +114,7 @@
                     @foreach ($gradeDistribution as $grade => $count)
                         @if ($count > 0)
                             <div class="flex items-center gap-3">
-                                <span class="text-xs font-medium w-6 text-right text-gray-600">{{ $grade }}</span>
+                                <span class="text-xs text-start font-medium w-6 text-gray-600">{{ $grade }}</span>
                                 <div class="flex-1 bg-gray-100 rounded-full h-2">
                                     <div class="{{ $gradeColors[$grade]['bar'] }} h-2 rounded-full transition-all"
                                         style="width: {{ round(($count / $totalMarks) * 100) }}%">

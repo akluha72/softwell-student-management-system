@@ -26,8 +26,6 @@ class Student extends Model
         'enrolled_at' => 'date',
     ];
 
-    // ── Relationships ────────────────────────────────────────
-
     public function courses(): BelongsToMany
     {
         return $this->belongsToMany(Course::class)
@@ -39,8 +37,6 @@ class Student extends Model
     {
         return $this->hasMany(ExamMark::class);
     }
-
-    // ── Accessors ────────────────────────────────────────────
 
     /**
      * Get the student's overall average mark across all exams.

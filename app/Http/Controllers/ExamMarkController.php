@@ -48,6 +48,16 @@ class ExamMarkController extends Controller
     {
         ExamMark::create($request->validated());
 
+        $student = Student::find($request->student_id);
+        $student->courses()->syncWithoutDetaching([
+            $request->course_id =>
+                [
+                    'enrolled_at' => now(),
+                    'status' => 'active'
+                ],
+
+        ]);
+
         if ($request->has('redirect_to_student')) {
             return redirect()->route('students.show', $request->student_id)
                 ->with('success', 'Exam mark added successfully.');
@@ -83,6 +93,15 @@ class ExamMarkController extends Controller
     public function update(UpdateExamMarkRequest $request, ExamMark $examMark)
     {
         $examMark->update($request->validated());
+
+        // Ensure enrollment exists for the (possibly updated) course
+        $student = Student::find($request->student_id);
+        $student->courses()->syncWithoutDetaching([
+            $request->course_id => [
+                'enrolled_at' => now()->toDateString(),
+                'status' => 'active',
+            ]
+        ]);
 
         return redirect()->route('exam-marks.show', $examMark)
             ->with('success', 'Exam mark updated successfully.');
